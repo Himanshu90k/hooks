@@ -1,26 +1,38 @@
-import { useState, useReducer } from 'react';
+import { useState, useReducer, } from 'react';
 import Todo from './Todo';
 
-const ACTIONS = {
-  ADD_TASK: "add_task"
-};
-
-const reducer = (todos, action) => {
-  switch (action.types) {
-    case ACTIONS.ADD_TASK:
-      return [...todos, addTask(action.payload.task)];
-    default:
-      return todos;
-  };
-};
-
-const addTask = (taskName) => {
-  return {id: Date.now(), complete: false, task: taskName};
+export const ACTIONS = {
+  ADD_TASK: "add_task",
+  TOGGLE_TASK: "toggle_task",
+  DELETE_TASK: "delete_task"
 };
 
 const App = () => {
 
-  const [taskName, setTaskName] = useState("");
+  const addTask = (taskName) => {
+    return {id: Date.now(), complete: false, task: taskName};
+  };
+
+  const reducer = (todos, action) => {
+    switch (action.types) {
+      case ACTIONS.ADD_TASK:
+        return [...todos, addTask(action.payload.task)];
+      case ACTIONS.TOGGLE_TASK:
+        return todos.map((todo) => {
+          if(todo.id === action.payload.id) {
+            return {...todo, complete: !todo.complete};
+          } else {
+            return todo;
+          }
+        })
+      case ACTIONS.DELETE_TASK:
+        return todos.filter((todo) => todo.id !== action.payload.id);
+      default:
+        return todos;
+    }
+  };
+
+  const [taskName, setTaskName] = useState(() =>  "");
 
   const [todos, dispatch] = useReducer(reducer, []);
 
@@ -41,7 +53,7 @@ const App = () => {
 
       {
         todos.map((todo) => {
-          return <Todo key={todo.id} todo={todo} />
+          return <Todo key={todo.id} todo={todo} dispatch={dispatch}/>
         })
       }
     </>
