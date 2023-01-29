@@ -1,4 +1,5 @@
 import { useState, useReducer } from 'react';
+import Todo from './Todo';
 
 const ACTIONS = {
   ADD_TASK: "add_task"
@@ -37,6 +38,12 @@ const App = () => {
         <label title="Task input"/>
         <input type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} placeholder="Add Task"/>
       </form>
+
+      {
+        todos.map((todo) => {
+          return <Todo key={todo.id} todo={todo} />
+        })
+      }
     </>
   );
 };
